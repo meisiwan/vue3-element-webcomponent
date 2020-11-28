@@ -1,0 +1,9 @@
+:root{
+    --main-color-hue: 210;
+    --main-color: hsl(var(--main-color-hue), 100.0%, 62.5%);
+    --main-active-color: hsl(var(--main-color-hue), 77.5%, 56.5%);
+    --main-hover-color: hsl(var(--main-color-hue), 100.0%, 70.0%);
+}
+el-view{
+    display: none;
+}
