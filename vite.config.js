@@ -9,26 +9,10 @@ module.exports = {
      * 与“根”相关的目录，构建输出将放在其中。如果目录存在，它将在构建之前被删除。
      * @default 'dist'
      */
-    pages: {
-        index: {
-            // 入口文件
-            entry: 'src/main.ts',　　/*这个是根入口文件*/
-            // 模板文件
-            template: './index.html',
-            // 输出文件
-            filename: 'index.html',
-            // 页面title
-            title: 'vue-element-webcomponent'
-        },
-        // 简写格式
-        // 模板文件默认是 `public/subpage.html`
-        // 如果不存在，就是 `public/index.html`.
-        // 输出文件默认是 `subpage.html`.
-        subpage: 'src/main.js'　　　　/*注意这个是*/
-    },
-    outDir: 'dist',
-    assetsDir: '',
-    port: 3000,
+    silent: false,
+    cssCodeSplit: true,
+    //assetsInclude: () => true,
+    port: 8000,
     // 是否自动在浏览器打开
     open: true,
     // 是否开启 https
@@ -44,7 +28,18 @@ module.exports = {
     optimizeDeps: {
         include: [],
     },
+    assetsDir: '',
     rollupOutputOptions: {
+        // input: 'src/main.ts',
+        // output: {
+        //     compact: true,
+        //     // dir: 'dist',
+        //     file: 'dist/main.js',
+        //     inlineDynamicImports: true, //打包成一个文件
+        //     // entryFileNames: 'main.js',
+        //     assetFileNames: '[name][extname]', //css等静态文件
+        //     // chunkFileNames: "[name].js"
+        // }
     },
     sourcemap: false,
     minify: 'terser',
