@@ -14,7 +14,7 @@ module.exports = {
     //assetsInclude: () => true,
     port: 8000,
     // 是否自动在浏览器打开
-    open: true,
+    open: false,
     // 是否开启 https
     https: false,
     cssPreprocessOptions: {
@@ -22,6 +22,7 @@ module.exports = {
         //   additionalData: '@import "./src/assets/style/index.scss";'
         // }
     },
+    jsx: 'vue',
     // 服务端渲染
     ssr: false,
     // 引入第三方的配置
@@ -29,18 +30,18 @@ module.exports = {
         include: [],
     },
     assetsDir: '',
-    rollupOutputOptions: {
-        // input: 'src/main.ts',
-        // output: {
-        //     compact: true,
-        //     // dir: 'dist',
-        //     file: 'dist/main.js',
-        //     inlineDynamicImports: true, //打包成一个文件
-        //     // entryFileNames: 'main.js',
-        //     assetFileNames: '[name][extname]', //css等静态文件
-        //     // chunkFileNames: "[name].js"
-        // }
-    },
+    rollupOutputOptions: process.env.npm_lifecycle_event == 'build' ? {
+        input: 'src/main.ts',
+        output: {
+            compact: true,
+            // dir: 'dist',
+            file: 'dist/main.js',
+            inlineDynamicImports: true, //打包成一个文件
+            // entryFileNames: 'main.js',
+            assetFileNames: '[name][extname]', //css等静态文件
+            // chunkFileNames: "[name].js"
+        }
+    } : {},
     sourcemap: false,
     minify: 'terser',
     alias: {

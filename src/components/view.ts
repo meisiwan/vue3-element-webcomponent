@@ -1,72 +1,72 @@
-import { createApp, render, reactive, compile, watchEffect, WatchStopHandle } from 'vue';
-import { refs } from '/@/state';
+import { createApp, render, reactive, compile, watchEffect, WatchStopHandle, onErrorCaptured, watch } from 'vue';
+import { setRef, _getRef } from '/@/state';
+import Button from './button';
 export class ViewElement extends HTMLElement {
-    public ref: string = ''; //用于获取数据
-    private error: HTMLElement;
-    private content: HTMLElement;
-    static errorInHtml: boolean = true; //是否在页面展示错误信息
-    static errorInfo: boolean = false; //是否在控制台提示错误信息
+    static showError: boolean = true; //是否在控制台提示错误信息
+    #ref: string = ''; //用于获取数据
+    #content: HTMLElement;
+    #tip: HTMLElement;
     constructor() {
         super();
         var shadow = this.attachShadow({ mode: 'open' });
-        this.content = document.createElement('slot');
-        this.content.style.display = 'none';
-        this.error = document.createElement('div');
-        shadow.appendChild(this.error);
-        shadow.appendChild(this.content);
+        this.#content = document.createElement('slot');
+        this.#content.style.display = 'none';
+        this.#tip = document.createElement('div');
+        shadow.appendChild(this.#tip);
+        shadow.appendChild(this.#content);
     }
     connectedCallback() {
         import('/@/style/load.css');
         let _render = compile(this, { isCustomElement: (tag: string) => !!customElements.get(tag) });
         let stop: WatchStopHandle, hasErr = false;
-        const data = refs[this.ref] || reactive({});
+        const data = _getRef(this.#ref) || reactive({});
         stop = watchEffect(() => {
             try {
                 //事先渲染 没有错误就创建app
-                render((_render as any)(data), document.createElement('div'))
+                render((_render as any)(data), document.createElement('section'))
                 const app = createApp({
                     render: _render,
                     data: () => data,
                 });
+                // app.component('el-button', Button)
+                // app.config.isCustomElement = tag => tag.startsWith('el-');
                 app.mount(this);
-                //错误捕捉
-                app.config.errorHandler = (err: unknown, vm: any, info: string) => {
-                    if (ViewElement.errorInHtml) {
-                        this.content.style.display = 'none';
-                        this.error.innerHTML = 'Error: ' + (err as Error).message;
-                    }
-                    this.info(err as Error);
-                }
                 stop && stop();
-                this.content.style.display = 'block';
+                this.#content.style.display = 'block';
             } catch (err) {
+                if (hasErr) {
+                    this.info(err);
+                    console.error(err);
+                    console.error(this.innerHTML);
+                }
                 hasErr = true;
-                this.info(err);
             }
         });
         !hasErr && stop();
-
     }
     info(err: Error) {
-        ViewElement.errorInfo && console.error(err);
+        if (ViewElement.showError) {
+            this.#tip.style.cssText = 'display: block; color:red; padding: 10px 0;'
+            this.#tip.innerHTML = 'Error: ' + err.message;
+        }
     }
     static get observedAttributes() {
         return ['ref'];
     }
-    attributeChangedCallback(name: string, oldValue: string, value: string) {
-        if (name == 'ref') {
-            this.ref = value;
+    attributeChangedCallback(attr: string, oldValue: string, value: string) {
+        if (attr == 'ref') {
+            this.#ref = value;
             //如果已存在 则提示
-            if (refs[value]) {
+            if (_getRef(value)) {
                 return console.warn(`ref ${value} already exsit`);
             }
             if (oldValue) {
                 //切换ref
-                refs[value] = refs[oldValue];
-                refs[oldValue] = null;
+                setRef(value, _getRef(oldValue));
+                setRef(oldValue, null)
             } else {
                 //初始化
-                refs[value] = reactive({});
+                setRef(value, reactive({}))
             }
         }
     }

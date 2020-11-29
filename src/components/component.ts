@@ -5,33 +5,50 @@ interface ButtonProp {
     className: string
 }
 export class Component extends HTMLElement {
-    public content: HTMLElement;
-    public name: string; //默认类名
-    public static styles: CSSStyleSheet = new CSSStyleSheet();
-    public static rules: { value: CSSRule[] } = ref([]);
+    #content: HTMLElement;
+    #name: string; //默认类名
+    static styles: CSSStyleSheet = new CSSStyleSheet();
+    static rules: { value: CSSRule[] } = ref([]);
+    isMount: boolean = false;
     constructor({ tag, className }: ButtonProp) {
         super();
-        this.name = className;
-        var shadow = this.attachShadow({ mode: 'open' });
-        const content = this.content = document.createElement(tag);
-        content.className = className;
-        //获取css
-        Component.getStyles().then((rules) => {
-            const css = [].filter.call(rules,
-                (rule: CSSStyleRule) => rule.selectorText.includes(className)
-            ) as CSSStyleRule[];
-            if (css.length) {
-                const styleDom = document.createElement('style');
-                css.forEach(css => {
-                    styleDom.innerHTML += css.cssText
-                });
-                shadow.appendChild(styleDom);
-            }
-            content.innerHTML = '<slot></slot>';
-            shadow.appendChild(content);
-        });
+        this.isMount = !this.closest('el-view');
+        this.#name = className;
+        this.#content = document.createElement(tag);
+        // this.#content.className = className;
+        // this.classList.add(className);
+        if (this.isMount) {
+            var shadow = this.attachShadow({ mode: 'open' });
+            //获取css
+            Component.getStyles().then((rules) => {
+                const css = [].filter.call(rules,
+                    (rule: CSSStyleRule) => rule.selectorText.includes(className)
+                ) as CSSStyleRule[];
+                if (css.length) {
+                    const styleDom = document.createElement('style');
+                    css.forEach(css => {
+                        styleDom.innerHTML += css.cssText
+                    });
+                    shadow.appendChild(styleDom);
+                }
+                if (tag != 'slot') {
+                    this.#content.innerHTML = '<slot></slot>';
+                }
+                shadow.appendChild(this.#content);
+                this.classList.add(this.#name)
+
+            });
+        }
     }
-    public static getStyles() {
+    gePproperty() {
+        return {
+            content: this.#content,
+            name: this.#name
+        }
+    }
+    connectedCallback() {
+    }
+    static getStyles() {
         let { styles, rules } = Component;
         if (styles.rules.length) return Promise.resolve(rules.value);
         return new Promise((resolve, reject) => {
@@ -42,7 +59,6 @@ export class Component extends HTMLElement {
                 }
             });
         });
-
     }
 }
 
@@ -50,7 +66,7 @@ import('/@/style/component.css').then((module) => {
     let cssTexts = module.default.match(/([\w\W]+?\{[\w\W]+?\})/g) as string[];
     let { styles, rules } = Component;
     try {
-        for (let i = cssTexts.length - 1; i--; i >= 0) {
+        for (let i = cssTexts.length; i--; i >= 0) {
             styles.insertRule(cssTexts[i], 0);
         }
         return Promise.resolve((rules.value as any) = styles.rules);
