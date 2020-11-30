@@ -454,6 +454,36 @@
     background-color: hsla(0, 0%, 100%, .35);
 }
 
+.el-button.el-button--medium {
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+.el-button--medium.is-round {
+    border-radius: 18px;
+}
+
+.el-button.el-button--small {
+    padding: 9px 15px;
+    font-size: 12px;
+    border-radius: 3px;
+}
+
+.el-button--small.is-round {
+    border-radius: 16px;
+}
+
+.el-button.el-button--mini {
+    padding: 7px 15px;
+    font-size: 12px;
+    border-radius: 3px;
+}
+
+.el-button--mini.is-round {
+    border-radius: 14px;
+}
+
 .el-row {
     margin-bottom: 20px;
     display: block;

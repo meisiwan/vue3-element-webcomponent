@@ -3,6 +3,7 @@ import { defineComponent } from 'vue';
 import { evalTemp } from '../config';
 export class Button extends Component {
     #icon?: HTMLElement;
+    #loadIcon?: HTMLElement;
     constructor() {
         super({
             tag: 'slot',
@@ -30,16 +31,17 @@ export class Button extends Component {
         }
     }
     static get observedAttributes() {
-        return ['type', 'icon', 'loading'];
+        return ['type', 'icon', 'loading', 'size'];
     }
     attributeChangedCallback(attr: string, oldValue: string, value: string) {
         if (this.isMount) {
             const { content, name } = this.gePproperty();
             switch (attr) {
-                case 'type': {
+                case 'type':
+                case 'size': {
                     this.classList.remove(name + '--' + oldValue);
                     this.classList.add(name + '--' + value);
-                    return;
+                    break;
                 }
                 case 'icon': {
                     if (!this.#icon) {
@@ -48,33 +50,35 @@ export class Button extends Component {
                         if (this.innerHTML) {
                             this.#icon.classList.add('el-button-icon')
                             this.insertBefore(this.#icon, this.childNodes[0])
-                        } else if(this.#icon){
+                        } else if (this.#icon) {
                             this.appendChild(this.#icon);
                         }
                     } else if (this.#icon) {
                         this.#icon.className = value;
                     }
-                    return;
+                    break;
                 }
                 case 'loading': {
-                    if (value != 'false') {
-                        if (!this.#icon) {
-                            this.#icon = document.createElement('i');
-                            this.#icon.className = 'el-icon-loading';
-                            if (this.innerHTML) {
-                                this.#icon.classList.add('el-button-icon')
-                                this.insertBefore(this.#icon, this.childNodes[0])
-                            } else {
-                                this.appendChild(this.#icon);
-                            }
-                        }
+                    this.#loadIcon = this.#loadIcon || document.createElement('i');
+                    this.#loadIcon.className = 'el-icon-loading';
+                    if (value == 'true' && !oldValue) {
+                        console.log(value, oldValue)
                         this.classList.add('is-loading');
-                    } else {
+                        if (this.innerHTML) {
+                            this.#loadIcon.classList.add('el-button-icon')
+                            this.insertBefore(this.#loadIcon, this.childNodes[0])
+                        } else {
+                            this.appendChild(this.#loadIcon);
+                        }
+                    } else if (value == 'false' && oldValue == 'true') {
                         this.classList.remove('is-loading');
+                        if (this.contains(this.#loadIcon)) {
+                            this.removeChild(this.#loadIcon);
+                        }
                     }
-                    return;
+                    break;
                 }
-                default: return;
+                default: break;
             }
         }
 
@@ -83,17 +87,19 @@ export class Button extends Component {
 customElements.define('el-button', Button);
 export default defineComponent({
     template: `
-        <el-button :type='type' :icon='icon' :loading="!!loading">
+        <el-button :type='type' :icon='icon' :size='size' :loading="loading">
             <slot></slot>
         </el-button>
     `,
     props: {
         loading: Boolean,
         type: String,
-        icon: String
+        icon: String,
+        size: String
     },
     setup(props) {
-        // console.log(props)
+        console.log(props);
+        return props
     }
 });
 
