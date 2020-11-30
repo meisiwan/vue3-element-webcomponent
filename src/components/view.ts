@@ -13,7 +13,7 @@ export class ViewElement extends HTMLElement {
     #ref: string = ''; //用于获取数据
     #content: HTMLElement;
     #tip: HTMLElement;
-    #components = new Set();
+    #components = new Set<string>();
     constructor() {
         super();
         var shadow = this.attachShadow({ mode: 'open' });
@@ -26,8 +26,15 @@ export class ViewElement extends HTMLElement {
     connectedCallback() {
         console.time('render');
         const template = this.innerHTML;
-        let _render = compile(`<section class='vrender'>template</section>`, { 
-            isCustomElement: (tag: string) => customElements.get(tag),
+        let _render = compile(`<section class='vrender'>${template}</section>`, { 
+            isCustomElement: (tag: string) => { 
+                if(customElements.get(tag) ){
+                    this.#components.add(tag);
+                    return true;
+                }else{
+                    return false;
+                }
+            },
         });
         let stop: WatchStopHandle, hasErr = false;
         const data = _getRef(this.#ref) || reactive({});
@@ -39,7 +46,10 @@ export class ViewElement extends HTMLElement {
                     render: compile(template, {
                         isCustomElement: tag => !components[tag]
                     }),
-                    components,
+                    //按需引入组件
+                    components: Array.from(this.#components).reduce((res, tag:string) => {
+                        return components[tag] ? Object.assign(res, { [tag]: components[tag] }) : res;
+                    }, {}),
                     data: () => data,
                     setup: () => {
                         onMounted(() => {
