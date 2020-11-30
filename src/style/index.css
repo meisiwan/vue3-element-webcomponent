@@ -40,9 +40,11 @@
     --danger-border-color: #fbc4c4;
 
 }
+
 /* 隐藏模版信息 */
 el-view {
     visibility: hidden;
+    display: block;
 }
 
 @font-face {

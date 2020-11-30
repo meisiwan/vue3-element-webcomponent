@@ -2,8 +2,8 @@ import { Component } from './component';
 import { defineComponent } from 'vue';
 import { evalTemp } from '../config';
 export class Button extends Component {
-    #icon?: HTMLElement;
-    #loadIcon?: HTMLElement;
+    #icon: HTMLElement = document.createElement('i');
+    #loadIcon: HTMLElement = document.createElement('i');
     constructor() {
         super({
             tag: 'slot',
@@ -44,33 +44,32 @@ export class Button extends Component {
                     break;
                 }
                 case 'icon': {
-                    if (!this.#icon) {
-                        this.#icon = this.#icon || document.createElement('i');
+                    if (value) {
                         this.#icon.className = value;
-                        if (this.innerHTML) {
-                            this.#icon.classList.add('el-button-icon')
-                            this.insertBefore(this.#icon, this.childNodes[0])
-                        } else if (this.#icon) {
-                            this.appendChild(this.#icon);
+                        if (!this.contains(this.#icon)) {
+                            if (this.innerHTML) {
+                                this.#icon.classList.add('el-button-icon');
+                                this.insertBefore(this.#icon, this.childNodes[0])
+                            } else {
+                                this.appendChild(this.#icon);
+                            }
                         }
-                    } else if (this.#icon) {
-                        this.#icon.className = value;
+                    } else {
+                        this.removeChild(this.#icon);
                     }
                     break;
                 }
                 case 'loading': {
-                    this.#loadIcon = this.#loadIcon || document.createElement('i');
-                    this.#loadIcon.className = 'el-icon-loading';
-                    if (value == 'true' && !oldValue) {
-                        console.log(value, oldValue)
+                    if (value == 'true') {
                         this.classList.add('is-loading');
+                        this.#loadIcon.className = 'el-icon-loading';
                         if (this.innerHTML) {
                             this.#loadIcon.classList.add('el-button-icon')
-                            this.insertBefore(this.#loadIcon, this.childNodes[0])
+                            this.insertBefore(this.#loadIcon, this.childNodes[0]);
                         } else {
                             this.appendChild(this.#loadIcon);
                         }
-                    } else if (value == 'false' && oldValue == 'true') {
+                    } else if (value == 'false') {
                         this.classList.remove('is-loading');
                         if (this.contains(this.#loadIcon)) {
                             this.removeChild(this.#loadIcon);
@@ -98,8 +97,7 @@ export default defineComponent({
         size: String
     },
     setup(props) {
-        console.log(props);
-        return props
+
     }
 });
 

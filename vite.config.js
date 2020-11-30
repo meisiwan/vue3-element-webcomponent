@@ -34,8 +34,8 @@ module.exports = {
         input: 'src/main.ts',
         output: {
             compact: true,
-            dir: 'dist',
-            // file: 'dist/main.js',
+            // dir: 'docs',
+            file: 'docs/main.js',
             inlineDynamicImports: true, //打包成一个文件
             entryFileNames: 'main.js',
             assetFileNames: '[name][extname]', //css等静态文件
