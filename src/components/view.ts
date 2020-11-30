@@ -1,4 +1,4 @@
-import { createApp, render, reactive, compile, watchEffect, WatchStopHandle, onErrorCaptured, watch, onMounted, onUpdated } from 'vue';
+import { createApp, render, reactive, compile, watchEffect, WatchStopHandle, onErrorCaptured, watch, onMounted, defineAsyncComponent } from 'vue';
 import { setRef, _getRef } from '/@/state';
 import Button from './button';
 interface Components {
@@ -7,7 +7,7 @@ interface Components {
 const components = {
     'el-button': Button
 } as Components;
-const isComponent = Object.keys(components);
+
 export class ViewElement extends HTMLElement {
     static showError: boolean = true; //是否在控制台提示错误信息
     #ref: string = ''; //用于获取数据
@@ -26,7 +26,7 @@ export class ViewElement extends HTMLElement {
     connectedCallback() {
         console.time('render');
         const template = this.innerHTML;
-        let _render = compile(template, { 
+        let _render = compile(`<section class='vrender'>template</section>`, { 
             isCustomElement: (tag: string) => customElements.get(tag),
         });
         let stop: WatchStopHandle, hasErr = false;
@@ -36,7 +36,9 @@ export class ViewElement extends HTMLElement {
                 //事先渲染 没有错误就创建app
                 render((_render as any)(data), document.createElement('section'));
                 const app = createApp({
-                    template,
+                    render: compile(template, {
+                        isCustomElement: tag => !components[tag]
+                    }),
                     components,
                     data: () => data,
                     setup: () => {
@@ -44,11 +46,9 @@ export class ViewElement extends HTMLElement {
                             console.timeEnd('render');
                             this.style.visibility = 'visible';
                         });
-                       
                     }
                 });
                 app.config.warnHandler = (err) => {
-                    console.warn(err)   
                 }
                 app.mount(this);
                 stop && stop();

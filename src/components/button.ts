@@ -93,7 +93,7 @@ export default defineComponent({
         icon: String
     },
     setup(props) {
-
+        // console.log(props)
     }
 });
 
