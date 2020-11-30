@@ -1,11 +1,19 @@
-import { createApp, render, reactive, compile, watchEffect, WatchStopHandle, onErrorCaptured, watch } from 'vue';
+import { createApp, render, reactive, compile, watchEffect, WatchStopHandle, onErrorCaptured, watch, onMounted, onUpdated } from 'vue';
 import { setRef, _getRef } from '/@/state';
 import Button from './button';
+interface Components {
+    [key:string]: any
+}
+const components = {
+    'el-button': Button
+} as Components;
+const isComponent = Object.keys(components);
 export class ViewElement extends HTMLElement {
     static showError: boolean = true; //是否在控制台提示错误信息
     #ref: string = ''; //用于获取数据
     #content: HTMLElement;
     #tip: HTMLElement;
+    #components = new Set();
     constructor() {
         super();
         var shadow = this.attachShadow({ mode: 'open' });
@@ -16,20 +24,32 @@ export class ViewElement extends HTMLElement {
         shadow.appendChild(this.#content);
     }
     connectedCallback() {
-        import('/@/style/load.css');
-        let _render = compile(this, { isCustomElement: (tag: string) => !!customElements.get(tag) });
+        console.time('render');
+        const template = this.innerHTML;
+        let _render = compile(template, { 
+            isCustomElement: (tag: string) => customElements.get(tag),
+        });
         let stop: WatchStopHandle, hasErr = false;
         const data = _getRef(this.#ref) || reactive({});
         stop = watchEffect(() => {
             try {
                 //事先渲染 没有错误就创建app
-                render((_render as any)(data), document.createElement('section'))
+                render((_render as any)(data), document.createElement('section'));
                 const app = createApp({
-                    render: _render,
+                    template,
+                    components,
                     data: () => data,
+                    setup: () => {
+                        onMounted(() => {
+                            console.timeEnd('render');
+                            this.style.visibility = 'visible';
+                        });
+                       
+                    }
                 });
-                // app.component('el-button', Button)
-                // app.config.isCustomElement = tag => tag.startsWith('el-');
+                app.config.warnHandler = (err) => {
+                    console.warn(err)   
+                }
                 app.mount(this);
                 stop && stop();
                 this.#content.style.display = 'block';

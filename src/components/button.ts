@@ -11,6 +11,8 @@ export class Button extends Component {
     }
     connectedCallback() {
         if (this.isMount) {
+            const { name } = this.gePproperty();
+            this.classList.add(name)
             // const { content, name } = this.gePproperty();
             if (this.hasAttribute('plain')) {
                 this.classList.add('is-plain');
@@ -41,12 +43,12 @@ export class Button extends Component {
                 }
                 case 'icon': {
                     if (!this.#icon) {
-                        this.#icon = document.createElement('i');
+                        this.#icon = this.#icon || document.createElement('i');
                         this.#icon.className = value;
-                        if (this.childNodes.length) {
+                        if (this.innerHTML) {
                             this.#icon.classList.add('el-button-icon')
                             this.insertBefore(this.#icon, this.childNodes[0])
-                        } else {
+                        } else if(this.#icon){
                             this.appendChild(this.#icon);
                         }
                     } else if (this.#icon) {
@@ -55,12 +57,11 @@ export class Button extends Component {
                     return;
                 }
                 case 'loading': {
-                    console.log(value)
-                    if (attr && value != 'false') {
+                    if (value != 'false') {
                         if (!this.#icon) {
                             this.#icon = document.createElement('i');
                             this.#icon.className = 'el-icon-loading';
-                            if (this.childNodes.length) {
+                            if (this.innerHTML) {
                                 this.#icon.classList.add('el-button-icon')
                                 this.insertBefore(this.#icon, this.childNodes[0])
                             } else {
@@ -81,9 +82,18 @@ export class Button extends Component {
 }
 customElements.define('el-button', Button);
 export default defineComponent({
-    isCustomElement: (tag: string) => tag.startsWith('el-'),
+    template: `
+        <el-button :type='type' :icon='icon' :loading="!!loading">
+            <slot></slot>
+        </el-button>
+    `,
+    props: {
+        loading: Boolean,
+        type: String,
+        icon: String
+    },
     setup(props) {
-        console.log(props);
+
     }
 });
 

@@ -40,6 +40,10 @@
     --danger-border-color: #fbc4c4;
 
 }
+/* 隐藏模版信息 */
+el-view {
+    visibility: hidden;
+}
 
 @font-face {
     font-family: 'element-icons';
@@ -50,9 +54,7 @@
 }
 
 
-el-view {
-    display: none;
-}
+
 
 
 [class*=" el-icon-"],
