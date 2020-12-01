@@ -262,8 +262,8 @@
     padding: 12px;
 }
 
-.el-button-icon {
-    margin-right: 5px;
+.el-button [class*=el-icon-]+span {
+    margin-left: 5px;
 }
 
 .el-button.is-disabled,

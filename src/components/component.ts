@@ -10,7 +10,7 @@ export class Component extends HTMLElement {
         super();
         this.isMount = !this.closest('el-view');
         this.#name = className;
-        if(this.isMount){
+        if (this.isMount) {
             this.#content = document.createElement(tag);
             const shadow = this.attachShadow({ mode: 'open' });
             if (tag != 'slot') {
@@ -19,7 +19,7 @@ export class Component extends HTMLElement {
             shadow.appendChild(this.#content);
         }
     }
-    gePproperty() {
+    getPproperty() {
         return {
             content: this.#content,
             name: this.#name

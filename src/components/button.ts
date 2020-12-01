@@ -1,9 +1,6 @@
 import { Component } from './component';
 import { defineComponent } from 'vue';
-import { evalTemp } from '../config';
 export class Button extends Component {
-    #icon: HTMLElement = document.createElement('i');
-    #loadIcon: HTMLElement = document.createElement('i');
     constructor() {
         super({
             tag: 'slot',
@@ -12,9 +9,9 @@ export class Button extends Component {
     }
     connectedCallback() {
         if (this.isMount) {
-            const { name } = this.gePproperty();
+            const { name } = this.getPproperty();
             this.classList.add(name)
-            // const { content, name } = this.gePproperty();
+            // const { content, name } = this.getPproperty();
             if (this.hasAttribute('plain')) {
                 this.classList.add('is-plain');
             }
@@ -27,7 +24,6 @@ export class Button extends Component {
             if (this.hasAttribute('disabled')) {
                 this.classList.add('is-disabled');
             }
-
         }
     }
     static get observedAttributes() {
@@ -35,7 +31,7 @@ export class Button extends Component {
     }
     attributeChangedCallback(attr: string, oldValue: string, value: string) {
         if (this.isMount) {
-            const { content, name } = this.gePproperty();
+            const { content, name } = this.getPproperty();
             switch (attr) {
                 case 'type':
                 case 'size': {
@@ -43,37 +39,11 @@ export class Button extends Component {
                     this.classList.add(name + '--' + value);
                     break;
                 }
-                case 'icon': {
-                    if (value) {
-                        this.#icon.className = value;
-                        if (!this.contains(this.#icon)) {
-                            if (this.innerHTML) {
-                                this.#icon.classList.add('el-button-icon');
-                                this.insertBefore(this.#icon, this.childNodes[0])
-                            } else {
-                                this.appendChild(this.#icon);
-                            }
-                        }
-                    } else {
-                        this.removeChild(this.#icon);
-                    }
-                    break;
-                }
                 case 'loading': {
                     if (value == 'true') {
                         this.classList.add('is-loading');
-                        this.#loadIcon.className = 'el-icon-loading';
-                        if (this.innerHTML) {
-                            this.#loadIcon.classList.add('el-button-icon')
-                            this.insertBefore(this.#loadIcon, this.childNodes[0]);
-                        } else {
-                            this.appendChild(this.#loadIcon);
-                        }
                     } else if (value == 'false') {
                         this.classList.remove('is-loading');
-                        if (this.contains(this.#loadIcon)) {
-                            this.removeChild(this.#loadIcon);
-                        }
                     }
                     break;
                 }
@@ -86,8 +56,14 @@ export class Button extends Component {
 customElements.define('el-button', Button);
 export default defineComponent({
     template: `
-        <el-button :type='type' :icon='icon' :size='size' :loading="loading">
-            <slot></slot>
+        <el-button :type='type'  :size='size' :loading="loading">
+            <i v-if='loading' class='el-icon-loading'></i>
+            <i v-else='icon' :class='icon'></i>
+            <slot v-if='!slots.default'></slot>
+            <span v-else>
+                <slot></slot>
+            </span>
+
         </el-button>
     `,
     props: {
@@ -96,8 +72,8 @@ export default defineComponent({
         icon: String,
         size: String
     },
-    setup(props) {
-
+    setup(props, { slots }) {
+        return { slots }
     }
 });
 
