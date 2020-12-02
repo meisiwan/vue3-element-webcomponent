@@ -1,11 +1,13 @@
 import { createApp, render, reactive, compile, watchEffect, WatchStopHandle, onErrorCaptured, watch, onMounted, defineAsyncComponent } from 'vue';
 import { setRef, _getRef } from '/@/state';
 import Button from './button';
+import Link from './link';
 interface Components {
-    [key:string]: any
+    [key: string]: any
 }
 const components = {
-    'el-button': Button
+    'el-button': Button,
+    'el-link': Link
 } as Components;
 
 export class ViewElement extends HTMLElement {
@@ -26,12 +28,12 @@ export class ViewElement extends HTMLElement {
     connectedCallback() {
         console.time('render');
         const template = this.innerHTML;
-        let _render = compile(`<section class='vrender'>${template}</section>`, { 
-            isCustomElement: (tag: string) => { 
-                if(customElements.get(tag) ){
+        let _render = compile(`<section class='vrender'>${template}</section>`, {
+            isCustomElement: (tag: string) => {
+                if (customElements.get(tag)) {
                     this.#components.add(tag);
                     return true;
-                }else{
+                } else {
                     return false;
                 }
             },
@@ -47,7 +49,7 @@ export class ViewElement extends HTMLElement {
                         isCustomElement: tag => !components[tag]
                     }),
                     //按需引入组件
-                    components: Array.from(this.#components).reduce((res, tag:string) => {
+                    components: Array.from(this.#components).reduce((res, tag: string) => {
                         return components[tag] ? Object.assign(res, { [tag]: components[tag] }) : res;
                     }, {}),
                     data: () => data,

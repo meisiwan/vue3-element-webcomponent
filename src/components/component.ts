@@ -19,7 +19,7 @@ export class Component extends HTMLElement {
             shadow.appendChild(this.#content);
         }
     }
-    getPproperty() {
+    getProperty() {
         return {
             content: this.#content,
             name: this.#name

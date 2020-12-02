@@ -1,37 +1,25 @@
 import { Component } from './component';
 import { defineComponent } from 'vue';
-export class Button extends Component {
+
+export class Link extends Component {
     constructor() {
         super({
             tag: 'slot',
-            className: 'el-button',
+            className: 'el-link',
         });
     }
     connectedCallback() {
         if (this.isMount) {
             const { name } = this.getProperty();
-            this.classList.add(name)
-            if (this.hasAttribute('plain')) {
-                this.classList.add('is-plain');
-            }
-            if (this.hasAttribute('round')) {
-                this.classList.add('is-round');
-            }
-            if (this.hasAttribute('circle')) {
-                this.classList.add('is-circle');
-            }
+            this.classList.add(name);
         }
-    }
-    static get observedAttributes() {
-        return ['type', 'icon', 'loading', 'size'];
     }
     attributeChangedCallback(attr: string, oldValue: string, value: string) {
         if (this.isMount) {
             const { content, name } = this.getProperty();
             const classList = this.classList;
             switch (attr) {
-                case 'type':
-                case 'size': {
+                case 'type': {
                     classList.remove(name + '--' + oldValue);
                     classList.add(name + '--' + value);
                     break;
@@ -51,32 +39,25 @@ export class Button extends Component {
 
     }
 }
-customElements.define('el-button', Button);
+
+customElements.define('el-link', Link, { extends: 'a' });
+
 export default defineComponent({
     template: `
-        <el-button 
+        <a is='el-link'
             :type='type'  
-            :size='size' 
-            :loading="loading" 
+            :href='href'
             :disabled='disabled'>
-                <i v-if='loading' class='el-icon-loading'></i>
-                <i v-else='icon' :class='icon'></i>
-                <slot v-if='!slots.default'></slot>
-                <span v-else>
-                    <slot></slot>
-                </span>
-        </el-button>
+            <slot></slot>
+        </a>
     `,
     props: {
-        loading: Boolean,
-        type: String,
+        href: String,
+        type: String, // [primary, success, warning, danger, info]
         icon: String,
-        size: String,
         disabled: Boolean
     },
     setup(props, { slots }) {
         return { slots }
     }
 });
-
-
