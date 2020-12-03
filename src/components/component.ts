@@ -2,30 +2,23 @@ interface ButtonProp {
     tag: string,
     className: string
 }
-export class Component extends HTMLElement {
-    #content?: HTMLElement;
-    #name: string; //默认类名
+export class Element extends HTMLElement {
     isMount: boolean = false;
-    constructor({ tag, className }: ButtonProp) {
+    content!: HTMLElement;
+    class: string = '';
+    constructor() {
         super();
-        this.isMount = !this.closest('el-view');
-        this.#name = className;
-        if (this.isMount) {
-            this.#content = document.createElement(tag);
-            const shadow = this.attachShadow({ mode: 'open' });
-            if (tag != 'slot') {
-                this.#content.innerHTML = '<slot></slot>';
-            }
-            shadow.appendChild(this.#content);
-        }
     }
-    getProperty() {
-        return {
-            content: this.#content,
-            name: this.#name
-        }
+}
+
+export const Component = function (this: Element, { tag, className }: ButtonProp) {
+    this.isMount = !this.closest('el-view');
+    if (!this.isMount) return;
+    this.class = className;
+    this.content = document.createElement(tag);
+    const shadow = this.attachShadow({ mode: 'open' });
+    if (tag != 'slot') {
+        this.content.innerHTML = '<slot></slot>';
     }
-    connectedCallback() {
-        this.classList.add(this.#name);
-    }
+    shadow.appendChild(this.content);
 }

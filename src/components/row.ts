@@ -1,10 +1,15 @@
-import { Component } from './component';
-export class Row extends Component {
+import { Component, Element } from './component';
+export class Row extends Element {
     constructor() {
-        super({
+        super();
+        Component.call(this, {
             tag: 'slot',
             className: 'el-row',
         });
+    }
+    connectedCallback() {
+        if (!this.isMount) return;
+        this.classList.add(this.class);
     }
 }
 customElements.define('el-row', Row);

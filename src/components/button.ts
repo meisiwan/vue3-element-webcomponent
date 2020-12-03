@@ -1,52 +1,50 @@
-import { Component } from './component';
+import { Component, Element } from './component';
 import { defineComponent } from 'vue';
-export class Button extends Component {
+export class Button extends Element {
     constructor() {
-        super({
+        super();
+        Component.call(this, {
             tag: 'slot',
             className: 'el-button',
         });
     }
     connectedCallback() {
-        if (this.isMount) {
-            const { name } = this.getProperty();
-            this.classList.add(name)
-            if (this.hasAttribute('plain')) {
-                this.classList.add('is-plain');
-            }
-            if (this.hasAttribute('round')) {
-                this.classList.add('is-round');
-            }
-            if (this.hasAttribute('circle')) {
-                this.classList.add('is-circle');
-            }
+        if (!this.isMount) return;
+        this.classList.add(this.class);
+        if (this.hasAttribute('plain')) {
+            this.classList.add('is-plain');
+        }
+        if (this.hasAttribute('round')) {
+            this.classList.add('is-round');
+        }
+        if (this.hasAttribute('circle')) {
+            this.classList.add('is-circle');
         }
     }
     static get observedAttributes() {
         return ['type', 'icon', 'loading', 'size'];
     }
     attributeChangedCallback(attr: string, oldValue: string, value: string) {
-        if (this.isMount) {
-            const { content, name } = this.getProperty();
-            const classList = this.classList;
-            switch (attr) {
-                case 'type':
-                case 'size': {
-                    classList.remove(name + '--' + oldValue);
-                    classList.add(name + '--' + value);
-                    break;
-                }
-                case 'disabled':
-                case 'loading': {
-                    if (value == 'true') {
-                        classList.add('is-' + attr);
-                    } else if (value == 'false') {
-                        classList.remove('is-' + attr);
-                    }
-                    break;
-                }
-                default: break;
+        if (!this.isMount) return;
+        const name = this.class;
+        const classList = this.classList;
+        switch (attr) {
+            case 'type':
+            case 'size': {
+                classList.remove(name + '--' + oldValue);
+                classList.add(name + '--' + value);
+                break;
             }
+            case 'disabled':
+            case 'loading': {
+                if (value == 'true') {
+                    classList.add('is-' + attr);
+                } else if (value == 'false') {
+                    classList.remove('is-' + attr);
+                }
+                break;
+            }
+            default: break;
         }
 
     }

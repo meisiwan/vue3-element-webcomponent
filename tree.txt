@@ -1,0 +1,62 @@
+
+│  .gitignore
+│  index.html
+│  package.json
+│  README.md
+│  tsconfig.json
+│  vite.config.js    
+│  yarn.lock
+│  
+├─dist
+│      favicon.ico
+│      index.html
+│      
+├─docs                      ====>文档开发目录
+│  │  element-icons.woff    ====>elementUI的icon 打包生成
+│  │  index.md              ====>文档首页
+│  │  index.scss            ====>文档样式
+│  │  main.js               ====>打包生成的js 文档需要引入
+│  │  style.css             ====>打包生成的样式 文档需要引入
+│  │  
+│  ├─.vitepress             ====>写文档目录
+│  │  │  config.js          ====>文档配置 左侧菜单
+│  │  │  
+│  │  └─theme               ====>文档主题
+│  │          index.js      ====>文档布局文件
+│  │          layout.vue    ====>无用
+│  │          
+│  └─button
+│          index.md         ====>button组件的文档开发
+│         
+│          
+├─public
+│      favicon.ico
+│      
+├─src
+│  │  main.ts                ====>入口文件
+│  │  
+│  ├─assets
+│  │      element-icons.woff 
+│  │      
+│  ├─components
+│  │      button-group.ts    ====>按钮组
+│  │      button.ts          ====>按钮
+│  │      component.ts       ====>组件 用来继承 定义公告属性
+│  │      index.js           ====>组件入口文件 用来导出执行组件
+│  │      link.ts            ====>链接组件
+│  │      row.ts             ====>行组件
+│  │      view.ts            ====>视图组件 用来初始化vue 包裹所有的组件标签
+│  │      
+│  ├─config
+│  │      index.ts           ====>配置文件
+│  │      
+│  ├─state
+│  │      index.ts           ====>状态文件， 用来暴露vue实例的data
+│  │      
+│  └─style
+│          component.css    ====>组件的样式
+│          index.css        ====>公共样式 css变量
+│          
+└─types
+        index.d.ts          ====>ts文件， 定义类型
+        
