@@ -22,7 +22,7 @@ export class Button extends Element {
         }
     }
     static get observedAttributes() {
-        return ['type', 'icon', 'loading', 'size'];
+        return ['type', 'icon', 'loading', 'size', 'disabled'];
     }
     attributeChangedCallback(attr: string, oldValue: string, value: string) {
         if (!this.isMount) return;
