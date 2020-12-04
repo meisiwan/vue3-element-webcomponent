@@ -589,3 +589,7 @@
 .el-link.el-link--info.is-disabled {
     color: var(--info-disable-color);
 }
+
+.el-link [class*=el-icon-]+span {
+    margin-left: 5px;
+}

@@ -21,7 +21,6 @@ export class Link extends Element {
         if (this.isMount) {
             const name = this.class;
             const classList = this.classList;
-            console.log(attr)
             switch (attr) {
                 case 'type': {
                     classList.remove(name + '--' + oldValue);
@@ -54,9 +53,15 @@ export default defineComponent({
             :disabled='disabled' 
             :underline='!disabled && underline'>
                 <a v-if='href' :href='href' :target='target'>
-                    <slot></slot>
+                    <i v-if="icon" :class='icon'></i>
+                    <span v-if='icon'><slot></slot></span>
+                    <slot v-else></slot>
                 </a>
-                <slot v-else></slot>
+                <template v-else>
+                    <i v-if="icon" :class='icon'></i>
+                    <span v-if='icon'><slot></slot></span>
+                    <slot v-else></slot>
+                </template>
         </el-link>
     `,
     props: {
