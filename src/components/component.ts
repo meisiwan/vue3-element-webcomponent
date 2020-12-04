@@ -1,5 +1,5 @@
 interface ButtonProp {
-    tag: string,
+    tag?: string,
     className: string
 }
 export class Element extends HTMLElement {
@@ -10,8 +10,17 @@ export class Element extends HTMLElement {
         super();
     }
 }
+export class InputElement extends HTMLInputElement {
+    isMount: boolean = false;
+    content!: HTMLElement;
+    class: string = '';
+    constructor() {
+        super();
+    }
+}
 
-export const Component = function (this: Element, { tag, className }: ButtonProp) {
+
+export const Component = function (this: Element, { tag = 'slot', className }: ButtonProp) {
     this.isMount = !this.closest('el-view');
     if (!this.isMount) return;
     this.class = className;

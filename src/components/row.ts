@@ -3,8 +3,7 @@ export class Row extends Element {
     constructor() {
         super();
         Component.call(this, {
-            tag: 'slot',
-            className: 'el-row',
+            className: 'el-row'
         });
     }
     connectedCallback() {

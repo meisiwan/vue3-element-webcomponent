@@ -16,7 +16,7 @@
 
 <body>
     <h2>按钮</h2>
-    <el-view ref='v2'>
+    <el-view :data="{ item: true  }">
         <el-row>
             <el-button> 默认按钮 </el-button>
             <el-button type='primary'> 主要按钮 </el-button>
@@ -140,15 +140,7 @@
     </el-view>
 </body>
 <script>
-    addEventListener("init", (e) => {
-        var {
-            getRef
-        } = e.detail;
 
-        getRef('v2').then(data => {
-            data.item = true;
-        });
-    });
 </script>
 
 </html>

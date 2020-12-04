@@ -3,7 +3,6 @@ export class ButtonGroup extends Element {
     constructor() {
         super();
         Component.call(this, {
-            tag: 'slot',
             className: 'el-button-group',
         });
     }

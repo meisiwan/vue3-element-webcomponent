@@ -3,10 +3,7 @@ import { defineComponent } from 'vue';
 export class Button extends Element {
     constructor() {
         super();
-        Component.call(this, {
-            tag: 'slot',
-            className: 'el-button',
-        });
+        Component.call(this, { className: 'el-button' });
     }
     connectedCallback() {
         if (!this.isMount) return;
@@ -55,7 +52,7 @@ export default defineComponent({
         <el-button 
             :type='type'  
             :size='size' 
-            :loading="loading" 
+            :loading="!!loading" 
             :disabled='disabled'>
                 <i v-if='loading' class='el-icon-loading'></i>
                 <i v-else='icon' :class='icon'></i>
@@ -66,7 +63,7 @@ export default defineComponent({
         </el-button>
     `,
     props: {
-        loading: Boolean,
+        loading: [Boolean, Number, String],
         type: String,
         icon: String,
         size: String,

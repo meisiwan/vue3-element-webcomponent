@@ -5,8 +5,7 @@ export class Link extends Element {
     constructor() {
         super();
         Component.call(this, {
-            tag: 'slot',
-            className: 'el-link',
+            className: 'el-link'
         });
     }
     connectedCallback() {
