@@ -58,8 +58,8 @@ export class ViewElement extends HTMLElement {
             case 'data':
             case ':data': {
                 try {
-                    // Object.assign(this.#data, JSON.parse(value));
-                    this.#data.item = 1;
+                    Object.assign(this.#data, new Function(`return ${value};`)());
+                    // this.#data.item = 1;
                 } catch (err) {
                     console.log(err);
                 }

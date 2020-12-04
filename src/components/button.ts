@@ -63,13 +63,14 @@ export default defineComponent({
         </el-button>
     `,
     props: {
-        loading: [Boolean, Number, String],
+        loading: Boolean,
         type: String,
         icon: String,
         size: String,
         disabled: Boolean
     },
     setup(props, { slots }) {
+        console.log(props.loading)
         return { slots }
     }
 });
