@@ -1,13 +1,11 @@
-import { Component, Element } from './component';
+import { Element } from './component';
 export class Row extends Element {
     constructor() {
-        super();
-        Component.call(this, {
+        super({
             className: 'el-row'
         });
     }
     connectedCallback() {
-        if (!this.isMount) return;
         this.classList.add(this.class);
     }
 }

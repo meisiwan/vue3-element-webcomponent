@@ -1,17 +1,25 @@
-import { createApp, render, reactive, compile, onMounted } from 'vue';
-import Button from './button';
-import Link from './link';
+import { createApp, render, reactive, compile, onMounted, ComponentPublicInstance } from 'vue';
+import ButtonComponent, { Button } from './button.vue';
+import LinkComponent, { Link } from './link.vue';
+import RadioCompoent, { Radio } from './radio.vue';
 interface Components {
     [key: string]: any
 }
-const components = {
+//需要进行数据传递的组件
+const ModelComponents = {
+    'el-button': ButtonComponent,
+    'el-link': LinkComponent,
+    'el-radio': RadioCompoent,
+} as Components;
+//web component实例
+const custom = {
     'el-button': Button,
-    'el-link': Link
+    'el-link': Link,
+    'el-radio': Radio,
 } as Components;
 
 export class ViewElement extends HTMLElement {
-    static showError: boolean = true; //是否在控制台提示错误信息
-    #components = new Set<string>();
+    #components = new Set<string>(); //已使用的标签
     #data = reactive<Record<string, any>>({});
     constructor() {
         super();
@@ -23,19 +31,22 @@ export class ViewElement extends HTMLElement {
         const template = this.innerHTML;
         compile(`<section>${template}</section>`, {
             isCustomElement: tag => {
-                components[tag] && this.#components.add(tag);
+                ModelComponents[tag] && this.#components.add(tag);
             }
+        });
+        //对已有标签进行按需 加载 和 定义
+        const components = {} as Record<string, ComponentPublicInstance>;
+        Array.from(this.#components).forEach(tag => {
+            customElements.define(tag, custom[tag]);
+            components[tag] = ModelComponents[tag];
         });
         const app = createApp({
             //编译收集标签
             render: compile(template, {
-                isCustomElement: (tag) => false
+                isCustomElement: (tag) => tag.startsWith('el-') && !components[tag]
             }),
             //按需引入组件
-            components: Array.from(this.#components).reduce(
-                (res, tag: string) => Object.assign(res, { [tag]: components[tag] }),
-                {}
-            ),
+            components: components,
             data: () => this.#data,
             setup: () => {
                 onMounted(() => {
