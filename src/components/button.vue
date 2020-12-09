@@ -11,6 +11,7 @@
         <span v-else>
             <slot></slot>
         </span>
+        <i class="el-icon-apple"></i>
     </el-button>
 </template>
 
