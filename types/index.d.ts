@@ -8,4 +8,5 @@ declare module '*.vue' {
     export const Radio: CustomElementConstructor;
     export const Button: CustomElementConstructor;
     export const Link: CustomElementConstructor;
+    export const RadioGroup: CustomElementConstructor;
 }

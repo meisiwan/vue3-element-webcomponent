@@ -3,7 +3,7 @@
         :size="size"
         :disabled="disabled"
         :checked="isCheck"
-        @click="$emit('update:modelValue', value)"
+        @click="onChange"
     >
         <input type="radio" :checked="isCheck" />
         <span :class="'el-radio__inner'"></span>
@@ -19,24 +19,27 @@ export default {
     props: {
         modelValue: {
             required: true,
-            type: [String, Number],
+            type: [String, Number, Object],
         },
         value: {
-            type: [String, Number],
+            type: [String, Number, Object],
             required: true,
         },
         size: String,
         disabled: Boolean,
     },
-    setup(props, { slots }) {
-        const { modelValue, value } = toRefs(props);
+    setup(props, { slots, emit }) {
+        const { modelValue, value, disabled } = toRefs(props);
         const isCheck = computed(() => modelValue.value === value.value);
-        watch(isCheck, () => {
-            console.log(isCheck.value);
-        });
-
+        watch(isCheck, () => {});
+        const onChange = () => {
+            if (!disabled.value) {
+                emit("update:modelValue", value.value);
+            }
+        };
         return {
             isCheck,
+            onChange,
         };
     },
 };
@@ -62,6 +65,7 @@ export class Radio extends Element {
                 break;
             }
             case "checked":
+            case "border":
             case "disabled":
                 if (value == "true") {
                     classList.add("is-" + attr);
@@ -131,5 +135,32 @@ export class Radio extends Element {
 }
 .el-radio.is-checked .el-radio__label {
     color: var(--main-color);
+}
+.el-radio.is-disabled .el-radio__inner {
+    background-color: #f5f7fa;
+    border-color: #e4e7ed;
+    cursor: not-allowed;
+}
+.el-radio.is-disabled .el-radio__inner:after {
+    cursor: not-allowed;
+    background-color: #f5f7fa;
+}
+.el-radio.is-disabled.is-checked .el-radio__inner:after {
+    background-color: #c0c4cc;
+}
+.el-radio.is-disabled .el-radio__label {
+    color: #c0c4cc;
+    cursor: not-allowed;
+}
+.el-radio.is-border.is-checked {
+    border-color: var(--main-color);
+}
+
+.el-radio.is-border {
+    padding: 12px 20px 0 10px;
+    border-radius: 4px;
+    border: 1px solid #dcdfe6;
+    box-sizing: border-box;
+    height: 40px;
 }
 </style>

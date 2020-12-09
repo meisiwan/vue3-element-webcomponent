@@ -16,7 +16,6 @@
 
 <script lang='ts'>
 import { Element } from "./component";
-import { defineComponent } from "vue";
 export default {
     props: {
         loading: Boolean,

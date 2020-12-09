@@ -16,7 +16,7 @@
 
 <body>
     <h2>按钮</h2>
-    <el-view :data="{ item: true, radio: 1  }">
+    <el-view :data="{ item: true, radio: 1 , radio1: '选中且禁用'  }">
         <el-row>
             <el-button> 默认按钮 </el-button>
             <el-button type='primary'> 主要按钮 </el-button>
@@ -140,6 +140,19 @@
         <el-row>
             <el-radio v-model="radio" :value="1">备选项</el-radio>
             <el-radio v-model="radio" :value="2">备选项</el-radio>
+        </el-row>
+        <h3>禁用状态</h3>
+        <el-row>
+            <el-radio disabled v-model="radio1" value="禁用">备选项</el-radio>
+            <el-radio disabled v-model="radio1" value="选中且禁用">备选项</el-radio>
+        </el-row>
+        <h3>单选框组</h3>
+        <el-row>
+            <el-radio-group v-model="radio">
+                <el-radio :value="1">备选项</el-radio>
+                <el-radio :value="2">备选项</el-radio>
+                <el-radio :value="3">备选项</el-radio>
+            </el-radio-group>
         </el-row>
     </el-view>
 </body>
