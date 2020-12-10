@@ -3,6 +3,7 @@ import ButtonComponent, { Button } from './button.vue';
 import LinkComponent, { Link } from './link.vue';
 import RadioCompoent, { Radio } from './radio.vue';
 import RadioGroupCompoent, { RadioGroup } from './radio-group.vue';
+import RadioButtonCompoent, { RadioButton } from './radio-button.vue';
 interface Components {
     [key: string]: any
 }
@@ -12,6 +13,7 @@ const ModelComponents = {
     'el-link': LinkComponent,
     'el-radio': RadioCompoent,
     'el-radio-group': RadioGroupCompoent,
+    'el-radio-button': RadioButtonCompoent,
 } as Components;
 //web component实例
 const custom = {
@@ -19,6 +21,7 @@ const custom = {
     'el-link': Link,
     'el-radio': Radio,
     'el-radio-group': RadioGroup,
+    'el-radio-button': RadioButton,
 } as Components;
 
 export class ViewElement extends HTMLElement {

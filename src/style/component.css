@@ -41,5 +41,5 @@
 
 .el-row {
     margin-bottom: 20px;
-    display: flex;
+    display: block;
 }

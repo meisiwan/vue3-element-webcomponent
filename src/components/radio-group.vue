@@ -9,27 +9,41 @@ export default {
     props: {
         modelValue: {
             required: true,
-            type: [String, Number],
+            type: [String, Number, Object, Boolean],
         },
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
+        size: {
+            type: String,
+            default: "",
+        },
+        name: String,
     },
     setup(props, { slots, emit }) {
-        const { modelValue } = toRefs(props);
-        const vModel = computed(() => modelValue.value);
+        const { modelValue, disabled, size, name } = toRefs(props);
         //如果插槽render函数不存在
-        if (!slots.default) return {};
+        if (!slots.default || !modelValue) return;
+        const vNodes: VNode[] = slots.default();
         return () => {
-            const render: any = slots.default;
             //执行render函数获取vnodes， 根据vnode生成全新的vnode
             return h(
                 "el-radio-group",
-                render().map((vnode: VNode) =>
-                    h(vnode, {
-                        modelValue: vModel.value,
+                vNodes.map((vnode) => {
+                    const props: Record<string, any> = vnode.props || {};
+                    let isDisabled = props.hasOwnProperty("disabled");
+                    return h(vnode, {
+                        modelValue: modelValue.value,
+                        disabled: isDisabled ? props.disabled : disabled.value,
+                        size: size?.value,
+                        name: name?.value,
                         "onUpdate:modelValue": (v: any) => {
                             emit("update:modelValue", v);
+                            emit("change", v);
                         },
-                    })
-                )
+                    });
+                })
             );
         };
     },

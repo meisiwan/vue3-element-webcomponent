@@ -3,9 +3,10 @@
         :size="size"
         :disabled="disabled"
         :checked="isCheck"
+        :border="border"
         @click="onChange"
     >
-        <input type="radio" :checked="isCheck" />
+        <input :name="name" type="radio" :checked="isCheck" />
         <span :class="'el-radio__inner'"></span>
         <span class="el-radio__label">
             <slot></slot>
@@ -13,28 +14,36 @@
     </el-radio>
 </template>
 <script lang="ts">
-import { computed, ref, toRefs, watch } from "vue";
+import { computed, ref, toRefs } from "vue";
 import { Element } from "./component";
 export default {
     props: {
         modelValue: {
             required: true,
-            type: [String, Number, Object],
+            type: [String, Number, Object, Boolean],
         },
         value: {
-            type: [String, Number, Object],
+            type: [String, Number, Object, Boolean],
             required: true,
         },
         size: String,
-        disabled: Boolean,
+        disabled: {
+            type: Boolean,
+            default: false,
+        },
+        border: {
+            type: Boolean,
+            default: false,
+        },
+        name: String,
     },
     setup(props, { slots, emit }) {
         const { modelValue, value, disabled } = toRefs(props);
         const isCheck = computed(() => modelValue.value === value.value);
-        watch(isCheck, () => {});
         const onChange = () => {
             if (!disabled.value) {
                 emit("update:modelValue", value.value);
+                emit("change", value.value);
             }
         };
         return {
@@ -52,7 +61,7 @@ export class Radio extends Element {
         this.classList.add(this.class);
     }
     static get observedAttributes() {
-        return ["size", "disabled", "checked"];
+        return ["size", "disabled", "checked", "border"];
     }
     attributeChangedCallback(attr: string, oldValue: string, value: string) {
         const name = this.class;
@@ -64,8 +73,8 @@ export class Radio extends Element {
                 classList.add(name + "--" + value);
                 break;
             }
-            case "checked":
             case "border":
+            case "checked":
             case "disabled":
                 if (value == "true") {
                     classList.add("is-" + attr);
@@ -162,5 +171,24 @@ export class Radio extends Element {
     border: 1px solid #dcdfe6;
     box-sizing: border-box;
     height: 40px;
+}
+.el-radio--medium.is-border {
+    padding: 10px 20px 0 10px;
+    border-radius: 4px;
+    height: 36px;
+}
+.el-radio--small.is-border {
+    padding: 8px 15px 0 10px;
+    border-radius: 3px;
+    height: 32px;
+}
+.el-radio--mini.is-border {
+    padding: 6px 15px 0 10px;
+    border-radius: 3px;
+    height: 28px;
+}
+.el-radio.is-border.is-disabled {
+    cursor: not-allowed;
+    border-color: #ebeef5;
 }
 </style>
